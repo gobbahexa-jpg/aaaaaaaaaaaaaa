@@ -1,0 +1,970 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Public discoverable profile for a DL Chat user.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Firebase Auth UID matching document ID." },
+        "username": { "type": "string", "description": "Lowercase unique handle (3-30 chars)." },
+        "displayName": { "type": "string", "description": "User display name (1-60 chars)." },
+        "bio": { "type": "string", "description": "Profile bio (0-240 chars)." },
+        "statusMessage": { "type": "string", "description": "Short user status banner (0-120 chars)." },
+        "avatarColor": { "type": "string", "description": "Hex accent color for avatar." },
+        "photoDataBase64": { "type": "string", "description": "Optional compressed avatar image data." },
+        "onlineStatus": { "type": "string", "enum": ["ONLINE", "AWAY", "DND", "OFFLINE"] },
+        "showLastSeen": { "type": "boolean" },
+        "showOnline": { "type": "boolean" },
+        "readReceipts": { "type": "boolean" },
+        "discoverable": { "type": "boolean" },
+        "suspended": { "type": "boolean" },
+        "publicKeyFingerprint": { "type": "string", "description": "SHA-256 identity key fingerprint." },
+        "publicKeyBase64": { "type": "string", "description": "X.509 EC secp256r1 public key for ECDH message encryption." },
+        "keyVersion": { "type": "integer", "description": "Monotonic identity key rotation version." },
+        "twoFactorEnabled": { "type": "boolean" },
+        "profilePhotoVisibility": { "type": "string", "enum": ["EVERYONE", "CONTACTS", "NOBODY"] },
+        "legionUserId": { "type": "string", "description": "Linked Death Legion OAuth user ID." },
+        "legionUsername": { "type": "string", "description": "Linked Death Legion OAuth username." },
+        "legionMemberNumber": { "type": "string", "description": "Death Legion membership number." },
+        "legionVerificationStatus": { "type": "string", "description": "Death Legion verification state." },
+        "legionPrimaryUnit": { "type": "string", "description": "Death Legion primary unit name." },
+        "premiumTier": { "type": "string", "enum": ["FREE", "PRO"] },
+        "lastSeenAt": { "type": "string", "format": "date-time", "description": "Submitted via FieldValue.serverTimestamp()." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Submitted via FieldValue.serverTimestamp()." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Submitted via FieldValue.serverTimestamp()." }
+      },
+      "required": ["userId", "username", "displayName", "bio", "avatarColor", "onlineStatus", "showLastSeen", "showOnline", "readReceipts", "discoverable", "suspended", "publicKeyFingerprint", "lastSeenAt", "createdAt", "updatedAt"]
+    },
+    "UserPrivateInfo": {
+      "title": "UserPrivateInfo",
+      "description": "Isolated PII record for the user.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "email": { "type": "string" },
+        "legionConnected": { "type": "boolean" },
+        "legionMemberNumber": { "type": "string" },
+        "legionUnit": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "email", "createdAt", "updatedAt"]
+    },
+    "UserSetting": {
+      "title": "UserSetting",
+      "description": "Persisted theme, privacy, notification, security, and appearance settings.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "themeMode": { "type": "string", "enum": ["DARK", "LIGHT", "SYSTEM"] },
+        "accentColorHex": { "type": "string" },
+        "bubbleStyle": { "type": "string", "enum": ["MODERN", "COMPACT", "CLASSIC"] },
+        "fontScale": { "type": "number" },
+        "wallpaperId": { "type": "string" },
+        "notificationsEnabled": { "type": "boolean" },
+        "soundEnabled": { "type": "boolean" },
+        "dndEnabled": { "type": "boolean" },
+        "aiEnabled": { "type": "boolean" },
+        "autoDownloadMedia": { "type": "boolean" },
+        "appLockEnabled": { "type": "boolean" },
+        "autoLockSeconds": { "type": "integer" },
+        "biometricLockEnabled": { "type": "boolean" },
+        "screenshotProtectionEnabled": { "type": "boolean" },
+        "hideNotificationContent": { "type": "boolean" },
+        "autoSyncOfflineQueue": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "themeMode", "accentColorHex", "bubbleStyle", "fontScale", "wallpaperId", "notificationsEnabled", "soundEnabled", "dndEnabled", "aiEnabled", "autoDownloadMedia", "createdAt", "updatedAt"]
+    },
+    "DeviceSession": {
+      "title": "DeviceSession",
+      "description": "Active or linked device session entry.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "deviceName": { "type": "string" },
+        "platform": { "type": "string" },
+        "deviceType": { "type": "string", "enum": ["ANDROID", "TABLET", "DESKTOP", "WEB"] },
+        "osName": { "type": "string" },
+        "browserName": { "type": "string" },
+        "connectionStatus": { "type": "string", "enum": ["ONLINE", "OFFLINE", "REVOKED"] },
+        "pairingSessionId": { "type": "string" },
+        "pairingTokenHash": { "type": "string" },
+        "tokenRotationCount": { "type": "integer" },
+        "revoked": { "type": "boolean" },
+        "firstLinkedAt": { "type": "string", "format": "date-time" },
+        "lastActiveAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "deviceName", "platform", "revoked", "lastActiveAt", "createdAt", "updatedAt"]
+    },
+    "DevicePairingSession": {
+      "title": "DevicePairingSession",
+      "description": "Short-lived, single-use WhatsApp-style QR pairing session.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string" },
+        "tokenHash": { "type": "string" },
+        "nonce": { "type": "string" },
+        "targetDeviceName": { "type": "string" },
+        "targetDeviceType": { "type": "string", "enum": ["ANDROID", "TABLET", "DESKTOP", "WEB"] },
+        "targetOs": { "type": "string" },
+        "targetBrowser": { "type": "string" },
+        "status": { "type": "string", "enum": ["PENDING", "APPROVED", "CONSUMED", "CANCELLED", "EXPIRED"] },
+        "expiresAtEpochMs": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ownerUid", "tokenHash", "nonce", "targetDeviceName", "targetDeviceType", "status", "expiresAtEpochMs", "createdAt", "updatedAt"]
+    },
+    "AccountSessionRecord": {
+      "title": "AccountSessionRecord",
+      "description": "Multi-account registry entry isolated per authenticated user.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "username": { "type": "string" },
+        "active": { "type": "boolean" },
+        "lastUsedAtEpochMs": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "email", "displayName", "username", "active", "lastUsedAtEpochMs", "createdAt", "updatedAt"]
+    },
+    "DeviceNotification": {
+      "title": "DeviceNotification",
+      "description": "Device security and login history notification.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "targetDeviceId": { "type": "string" },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "category": { "type": "string", "enum": ["NEW_DEVICE", "SECURITY", "SYNC", "CALL"] },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "title", "body", "category", "read", "createdAt", "updatedAt"]
+    },
+    "SyncEvent": {
+      "title": "SyncEvent",
+      "description": "Multi-device synchronization event log.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string" },
+        "entityType": { "type": "string", "enum": ["MESSAGE", "REACTION", "CONTACT", "CHAT", "FOLDER", "SETTING", "STORY", "SAVED", "DRAFT"] },
+        "entityId": { "type": "string" },
+        "operation": { "type": "string", "enum": ["UPSERT", "DELETE"] },
+        "versionEpochMs": { "type": "integer" },
+        "deviceId": { "type": "string" },
+        "payloadSummary": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ownerUid", "entityType", "entityId", "operation", "versionEpochMs", "deviceId", "createdAt", "updatedAt"]
+    },
+    "DeviceKeyBundle": {
+      "title": "DeviceKeyBundle",
+      "description": "Public E2EE key bundle per device (never contains private keys).",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string" },
+        "deviceId": { "type": "string" },
+        "publicKeyBase64": { "type": "string" },
+        "fingerprint": { "type": "string" },
+        "keyVersion": { "type": "integer" },
+        "revoked": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ownerUid", "deviceId", "publicKeyBase64", "fingerprint", "keyVersion", "revoked", "createdAt", "updatedAt"]
+    },
+    "ChatExportRecord": {
+      "title": "ChatExportRecord",
+      "description": "Metadata log for conversation exports.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string" },
+        "chatId": { "type": "string" },
+        "chatTitle": { "type": "string" },
+        "format": { "type": "string", "enum": ["JSON", "TXT", "DLBKP"] },
+        "itemCount": { "type": "integer" },
+        "sizeBytes": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ownerUid", "chatId", "chatTitle", "format", "itemCount", "sizeBytes", "createdAt", "updatedAt"]
+    },
+    "PrivateChatSetting": {
+      "title": "PrivateChatSetting",
+      "description": "Per-user hidden, locked, or pinned conversation preferences.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string" },
+        "chatId": { "type": "string" },
+        "hidden": { "type": "boolean" },
+        "locked": { "type": "boolean" },
+        "pinnedSortOrder": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ownerUid", "chatId", "hidden", "locked", "pinnedSortOrder", "createdAt", "updatedAt"]
+    },
+    "ChatDraft": {
+      "title": "ChatDraft",
+      "description": "Synchronized unsent message draft across linked devices.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string" },
+        "chatId": { "type": "string" },
+        "draftText": { "type": "string" },
+        "replyToId": { "type": "string" },
+        "updatedAtEpochMs": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ownerUid", "chatId", "draftText", "updatedAtEpochMs", "createdAt", "updatedAt"]
+    },
+    "ContactEntry": {
+      "title": "ContactEntry",
+      "description": "User contact, favorite, or block record.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string" },
+        "contactUid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "username": { "type": "string" },
+        "favorite": { "type": "boolean" },
+        "blocked": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ownerUid", "contactUid", "displayName", "username", "favorite", "blocked", "createdAt", "updatedAt"]
+    },
+    "ContactRequest": {
+      "title": "ContactRequest",
+      "description": "Mutual contact connection request.",
+      "type": "object",
+      "properties": {
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "senderUsername": { "type": "string" },
+        "receiverId": { "type": "string" },
+        "receiverName": { "type": "string" },
+        "status": { "type": "string", "enum": ["PENDING", "ACCEPTED", "DECLINED"] },
+        "message": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["senderId", "senderName", "senderUsername", "receiverId", "receiverName", "status", "createdAt", "updatedAt"]
+    },
+    "ChatFolder": {
+      "title": "ChatFolder",
+      "description": "Custom organization folder with inclusion/exclusion rules, icon, and sortOrder.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string" },
+        "name": { "type": "string" },
+        "filterType": { "type": "string", "enum": ["ALL", "DIRECT", "GROUP", "CHANNEL", "BOT", "ARCHIVED", "UNREAD", "FAVORITE", "CUSTOM"] },
+        "iconName": { "type": "string" },
+        "sortOrder": { "type": "integer" },
+        "includeChatIds": { "type": "array" },
+        "excludeChatIds": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ownerUid", "name", "filterType", "createdAt", "updatedAt"]
+    },
+    "SavedMessage": {
+      "title": "SavedMessage",
+      "description": "Personal saved messages and private notes.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string" },
+        "text": { "type": "string" },
+        "sourceChatName": { "type": "string" },
+        "sourceMessageId": { "type": "string" },
+        "noteCategory": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ownerUid", "text", "sourceChatName", "noteCategory", "createdAt", "updatedAt"]
+    },
+    "BackupRecord": {
+      "title": "BackupRecord",
+      "description": "Metadata log for encrypted local chat backups exported/restored by the owner.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string" },
+        "fileName": { "type": "string" },
+        "itemCount": { "type": "integer" },
+        "sizeBytes": { "type": "integer" },
+        "encryptionAlg": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ownerUid", "fileName", "itemCount", "sizeBytes", "encryptionAlg", "createdAt", "updatedAt"]
+    },
+    "ChatRoom": {
+      "title": "ChatRoom",
+      "description": "Direct conversation, group chat, or broadcast channel.",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["DIRECT", "GROUP", "CHANNEL"] },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "memberUids": { "type": "array" },
+        "adminUids": { "type": "array" },
+        "participantNames": { "type": "object" },
+        "publicVisible": { "type": "boolean" },
+        "channelHandle": { "type": "string" },
+        "adminOnlyPost": { "type": "boolean" },
+        "e2eeEnabled": { "type": "boolean" },
+        "archivedBy": { "type": "array" },
+        "mutedBy": { "type": "array" },
+        "pinnedMessageText": { "type": "string" },
+        "pinnedMessageId": { "type": "string" },
+        "pinnedMessages": { "type": "array" },
+        "lastMessageText": { "type": "string" },
+        "lastMessageSenderId": { "type": "string" },
+        "lastMessageAt": { "type": "string", "format": "date-time" },
+        "disappearingSeconds": { "type": "integer" },
+        "inviteCode": { "type": "string" },
+        "inviteRevoked": { "type": "boolean" },
+        "inviteExpiresAtEpochMs": { "type": "integer" },
+        "joinRequestUids": { "type": "array" },
+        "typingUids": { "type": "object" },
+        "readCursors": { "type": "object" },
+        "allowPinning": { "type": "boolean" },
+        "allowMemberInvites": { "type": "boolean" },
+        "themeAccentHex": { "type": "string" },
+        "adminActivityLog": { "type": "array" },
+        "linkedGroupId": { "type": "string" },
+        "slowModeSeconds": { "type": "integer" },
+        "restrictedUids": { "type": "array" },
+        "antiSpamEnabled": { "type": "boolean" },
+        "topicsEnabled": { "type": "boolean" },
+        "channelViewsCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["type", "title", "description", "ownerId", "memberUids", "adminUids", "participantNames", "publicVisible", "adminOnlyPost", "e2eeEnabled", "archivedBy", "mutedBy", "lastMessageText", "lastMessageSenderId", "lastMessageAt", "disappearingSeconds", "createdAt", "updatedAt"]
+    },
+    "ChatTopic": {
+      "title": "ChatTopic",
+      "description": "Group sub-forum topic thread.",
+      "type": "object",
+      "properties": {
+        "chatId": { "type": "string" },
+        "creatorId": { "type": "string" },
+        "title": { "type": "string" },
+        "iconEmoji": { "type": "string" },
+        "closed": { "type": "boolean" },
+        "messageCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["chatId", "creatorId", "title", "iconEmoji", "closed", "messageCount", "createdAt", "updatedAt"]
+    },
+    "GroupEvent": {
+      "title": "GroupEvent",
+      "description": "Group calendar event with RSVPs.",
+      "type": "object",
+      "properties": {
+        "chatId": { "type": "string" },
+        "creatorId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "startsAtEpochMs": { "type": "integer" },
+        "rsvpUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["chatId", "creatorId", "title", "description", "startsAtEpochMs", "rsvpUids", "createdAt", "updatedAt"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Real-time message in a direct chat, group, or channel.",
+      "type": "object",
+      "properties": {
+        "chatId": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "memberUids": { "type": "array" },
+        "publicChannel": { "type": "boolean" },
+        "type": { "type": "string", "enum": ["TEXT", "IMAGE", "POLL", "QUIZ", "STICKER", "CODE", "VOICE_NOTE", "LOCATION", "CONTACT", "AI_SUMMARY", "DOCUMENT", "VIDEO", "AUDIO"] },
+        "text": { "type": "string" },
+        "encrypted": { "type": "boolean" },
+        "ciphertextBase64": { "type": "string" },
+        "ivBase64": { "type": "string" },
+        "senderKeyVersion": { "type": "integer" },
+        "mediaDataBase64": { "type": "string" },
+        "mediaStorageStatus": { "type": "string" },
+        "fileName": { "type": "string" },
+        "fileMimeType": { "type": "string" },
+        "fileSizeBytes": { "type": "integer" },
+        "audioDurationMs": { "type": "integer" },
+        "waveformSamples": { "type": "array" },
+        "replyToId": { "type": "string" },
+        "replyToPreview": { "type": "string" },
+        "forwardedFrom": { "type": "string" },
+        "edited": { "type": "boolean" },
+        "editHistory": { "type": "array" },
+        "deletedForEveryone": { "type": "boolean" },
+        "pinnedInChat": { "type": "boolean" },
+        "reactions": { "type": "object" },
+        "deliveredTo": { "type": "array" },
+        "readBy": { "type": "array" },
+        "starredBy": { "type": "array" },
+        "pollQuestion": { "type": "string" },
+        "pollOptions": { "type": "array" },
+        "pollVotes": { "type": "object" },
+        "quizCorrectIndex": { "type": "integer" },
+        "quizExplanation": { "type": "string" },
+        "stickerId": { "type": "string" },
+        "topicId": { "type": "string" },
+        "threadRootId": { "type": "string" },
+        "reminderEpochMs": { "type": "integer" },
+        "aiTranscribedText": { "type": "string" },
+        "scheduledForEpochMs": { "type": "integer" },
+        "expiresAtEpochMs": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["chatId", "senderId", "senderName", "memberUids", "publicChannel", "type", "text", "edited", "deletedForEveryone", "reactions", "createdAt", "updatedAt"]
+    },
+    "StoryItem": {
+      "title": "StoryItem",
+      "description": "24-hour status story.",
+      "type": "object",
+      "properties": {
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "type": { "type": "string", "enum": ["TEXT", "IMAGE"] },
+        "text": { "type": "string" },
+        "backgroundHex": { "type": "string" },
+        "mediaDataBase64": { "type": "string" },
+        "viewedBy": { "type": "array" },
+        "reactions": { "type": "object" },
+        "hiddenFromUids": { "type": "array" },
+        "discoverable": { "type": "boolean" },
+        "expiresAtEpochMs": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["authorId", "authorName", "type", "text", "backgroundHex", "viewedBy", "reactions", "hiddenFromUids", "discoverable", "expiresAtEpochMs", "createdAt", "updatedAt"]
+    },
+    "CallSession": {
+      "title": "CallSession",
+      "description": "Real-time voice or video call signaling and call log entry.",
+      "type": "object",
+      "properties": {
+        "callerId": { "type": "string" },
+        "callerName": { "type": "string" },
+        "calleeId": { "type": "string" },
+        "calleeName": { "type": "string" },
+        "participantUids": { "type": "array" },
+        "callType": { "type": "string", "enum": ["VOICE", "VIDEO"] },
+        "status": { "type": "string", "enum": ["RINGING", "ACTIVE", "ENDED", "DECLINED", "MISSED"] },
+        "durationSeconds": { "type": "integer" },
+        "groupCall": { "type": "boolean" },
+        "sdpOffer": { "type": "string" },
+        "sdpAnswer": { "type": "string" },
+        "iceCandidates": { "type": "array" },
+        "signalingNote": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["callerId", "callerName", "calleeId", "calleeName", "participantUids", "callType", "status", "durationSeconds", "createdAt", "updatedAt"]
+    },
+    "ModerationReport": {
+      "title": "ModerationReport",
+      "description": "Categorized abuse, spam, scam, or safety report submitted by a user.",
+      "type": "object",
+      "properties": {
+        "reporterId": { "type": "string" },
+        "targetUid": { "type": "string" },
+        "targetType": { "type": "string", "enum": ["USER", "MESSAGE", "GROUP", "CHANNEL", "STORY", "PROFILE", "BUSINESS"] },
+        "category": { "type": "string", "enum": ["SPAM", "IMPERSONATION", "HARASSMENT", "SCAM", "INAPPROPRIATE_CONTENT", "OTHER"] },
+        "reason": { "type": "string" },
+        "status": { "type": "string", "enum": ["OPEN", "TRIAGED", "IN_REVIEW", "REVIEWED", "ACTION_TAKEN", "DISMISSED"] },
+        "chatId": { "type": "string" },
+        "messageId": { "type": "string" },
+        "storyId": { "type": "string" },
+        "targetName": { "type": "string" },
+        "evidenceSnippet": { "type": "string" },
+        "triageLabel": { "type": "string" },
+        "severityScore": { "type": "integer" },
+        "aiTriaged": { "type": "boolean" },
+        "caseId": { "type": "string" },
+        "reviewedByUid": { "type": "string" },
+        "resolutionNote": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["reporterId", "targetUid", "targetType", "reason", "status", "createdAt", "updatedAt"]
+    },
+    "StaffRoleRecord": {
+      "title": "StaffRoleRecord",
+      "description": "RBAC role assignment for Support Agents, Moderators, and Admins.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "role": { "type": "string", "enum": ["USER", "SUPPORT_AGENT", "SENIOR_SUPPORT_AGENT", "MODERATOR", "SENIOR_MODERATOR", "ADMIN", "SUPER_ADMIN"] },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "active": { "type": "boolean" },
+        "assignedBy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "role", "active", "assignedBy", "createdAt", "updatedAt"]
+    },
+    "UserEnforcement": {
+      "title": "UserEnforcement",
+      "description": "Effective account enforcement status and per-feature restriction expiry map.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "accountStatus": { "type": "string", "enum": ["ACTIVE", "WARNING_ISSUED", "MESSAGING_RESTRICTED", "MEDIA_RESTRICTED", "GROUP_CREATION_RESTRICTED", "GROUP_PARTICIPATION_RESTRICTED", "CHANNEL_CREATION_RESTRICTED", "CHANNEL_POSTING_RESTRICTED", "CALLING_RESTRICTED", "TEMP_SUSPENDED", "PERM_SUSPENDED", "UNDER_REVIEW", "DELETION_PENDING"] },
+        "featureExpiries": { "type": "object" },
+        "globalExpiryEpochMs": { "type": "integer" },
+        "reasonCode": { "type": "string" },
+        "reasonSummary": { "type": "string" },
+        "warningCount": { "type": "integer" },
+        "activeRestrictionCount": { "type": "integer" },
+        "lastEnforcedBy": { "type": "string" },
+        "lastEnforcedRole": { "type": "string" },
+        "lastEnforcementId": { "type": "string" },
+        "appealEligible": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "accountStatus", "featureExpiries", "globalExpiryEpochMs", "reasonSummary", "warningCount", "activeRestrictionCount", "appealEligible", "createdAt", "updatedAt"]
+    },
+    "UserWarning": {
+      "title": "UserWarning",
+      "description": "Formal policy warning issued to a user.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "reasonCode": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "policySection": { "type": "string" },
+        "issuedByUid": { "type": "string" },
+        "issuedByName": { "type": "string" },
+        "severity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+        "acknowledged": { "type": "boolean" },
+        "acknowledgedAtEpochMs": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "reasonCode", "title", "description", "issuedByUid", "severity", "acknowledged", "createdAt", "updatedAt"]
+    },
+    "UserRestrictionRecord": {
+      "title": "UserRestrictionRecord",
+      "description": "Historical and active enforcement restriction record.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "status": { "type": "string" },
+        "features": { "type": "array" },
+        "durationLabel": { "type": "string" },
+        "expiresAtEpochMs": { "type": "integer" },
+        "reasonCode": { "type": "string" },
+        "reason": { "type": "string" },
+        "enforcedByUid": { "type": "string" },
+        "enforcedByRole": { "type": "string" },
+        "humanApproved": { "type": "boolean" },
+        "active": { "type": "boolean" },
+        "revokedByUid": { "type": "string" },
+        "revokeReason": { "type": "string" },
+        "appealEligible": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "status", "features", "durationLabel", "expiresAtEpochMs", "reasonCode", "reason", "enforcedByUid", "humanApproved", "active", "appealEligible", "createdAt", "updatedAt"]
+    },
+    "ModerationCase": {
+      "title": "ModerationCase",
+      "description": "Moderator triage case aggregating related safety reports.",
+      "type": "object",
+      "properties": {
+        "targetUid": { "type": "string" },
+        "targetType": { "type": "string" },
+        "category": { "type": "string" },
+        "priority": { "type": "string", "enum": ["LOW", "NORMAL", "HIGH", "URGENT"] },
+        "status": { "type": "string", "enum": ["OPEN", "IN_REVIEW", "ESCALATED", "RESOLVED", "DISMISSED"] },
+        "reportIds": { "type": "array" },
+        "assignedModeratorUid": { "type": "string" },
+        "aiTriageSummary": { "type": "string" },
+        "recommendedAction": { "type": "string" },
+        "resolutionSummary": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["targetUid", "targetType", "category", "priority", "status", "createdAt", "updatedAt"]
+    },
+    "ModerationActionRecord": {
+      "title": "ModerationActionRecord",
+      "description": "Immutable moderator enforcement action log.",
+      "type": "object",
+      "properties": {
+        "caseId": { "type": "string" },
+        "targetUid": { "type": "string" },
+        "actorUid": { "type": "string" },
+        "actorRole": { "type": "string" },
+        "actionType": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["targetUid", "actorUid", "actionType", "notes", "createdAt", "updatedAt"]
+    },
+    "AppealRecord": {
+      "title": "AppealRecord",
+      "description": "User appeal against an enforcement restriction or suspension.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "restrictionId": { "type": "string" },
+        "originalEnforcerUid": { "type": "string" },
+        "status": { "type": "string", "enum": ["SUBMITTED", "UNDER_REVIEW", "INFO_REQUESTED", "APPROVED", "REJECTED", "CLOSED"] },
+        "reason": { "type": "string" },
+        "additionalInfo": { "type": "string" },
+        "attemptNumber": { "type": "integer" },
+        "reviewerUid": { "type": "string" },
+        "reviewerDecisionNote": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "restrictionId", "originalEnforcerUid", "status", "reason", "attemptNumber", "createdAt", "updatedAt"]
+    },
+    "SupportTicket": {
+      "title": "SupportTicket",
+      "description": "In-app customer support ticket with status, priority, and agent assignment.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userPhoneOrEmail": { "type": "string" },
+        "category": { "type": "string" },
+        "subject": { "type": "string" },
+        "description": { "type": "string" },
+        "status": { "type": "string", "enum": ["OPEN", "ASSIGNED", "WAITING_ON_USER", "WAITING_ON_SUPPORT", "ESCALATED", "RESOLVED", "CLOSED"] },
+        "priority": { "type": "string", "enum": ["LOW", "NORMAL", "HIGH", "URGENT"] },
+        "assignedAgentUid": { "type": "string" },
+        "assignedAgentName": { "type": "string" },
+        "lastMessageText": { "type": "string" },
+        "lastMessageAtEpochMs": { "type": "integer" },
+        "whatsappOptIn": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "userName", "category", "subject", "description", "status", "priority", "createdAt", "updatedAt"]
+    },
+    "SupportTicketMessage": {
+      "title": "SupportTicketMessage",
+      "description": "Two-way message inside a support ticket.",
+      "type": "object",
+      "properties": {
+        "ticketId": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "senderRole": { "type": "string", "enum": ["USER", "SUPPORT_AGENT", "SYSTEM"] },
+        "body": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ticketId", "senderId", "senderName", "senderRole", "body", "createdAt", "updatedAt"]
+    },
+    "SupportInternalNote": {
+      "title": "SupportInternalNote",
+      "description": "Staff-only internal note on a support ticket.",
+      "type": "object",
+      "properties": {
+        "ticketId": { "type": "string" },
+        "authorUid": { "type": "string" },
+        "authorName": { "type": "string" },
+        "note": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ticketId", "authorUid", "authorName", "note", "createdAt", "updatedAt"]
+    },
+    "HelpArticle": {
+      "title": "HelpArticle",
+      "description": "Searchable Help Center article managed via CMS.",
+      "type": "object",
+      "properties": {
+        "category": { "type": "string" },
+        "title": { "type": "string" },
+        "summary": { "type": "string" },
+        "bodyMarkdown": { "type": "string" },
+        "keywords": { "type": "array" },
+        "published": { "type": "boolean" },
+        "sortOrder": { "type": "integer" },
+        "helpfulCount": { "type": "integer" },
+        "updatedByUid": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["category", "title", "summary", "bodyMarkdown", "published", "sortOrder", "createdAt", "updatedAt"]
+    },
+    "PhoneAuthProfile": {
+      "title": "PhoneAuthProfile",
+      "description": "Verified phone identity & OTP channel preferences for a user.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "phoneE164": { "type": "string" },
+        "countryCode": { "type": "string" },
+        "countryDialCode": { "type": "string" },
+        "otpProvider": { "type": "string", "enum": ["FIREBASE_SMS", "WHATSAPP_TEMPLATE"] },
+        "verificationStatus": { "type": "string", "enum": ["VERIFIED", "LINKED", "UNVERIFIED", "MIGRATED"] },
+        "whatsappOptIn": { "type": "boolean" },
+        "verifiedAtEpochMs": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "phoneE164", "countryCode", "countryDialCode", "otpProvider", "verificationStatus", "whatsappOptIn", "createdAt", "updatedAt"]
+    },
+    "AuthSecurityEvent": {
+      "title": "AuthSecurityEvent",
+      "description": "Immutable phone authentication, linking, and anti-spam telemetry event.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "eventType": { "type": "string" },
+        "channel": { "type": "string" },
+        "maskedTarget": { "type": "string" },
+        "success": { "type": "boolean" },
+        "detail": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "eventType", "channel", "success", "detail", "createdAt", "updatedAt"]
+    },
+    "AdminAuditLog": {
+      "title": "AdminAuditLog",
+      "description": "Immutable administrative & staff audit trail.",
+      "type": "object",
+      "properties": {
+        "actorUid": { "type": "string" },
+        "actorRole": { "type": "string" },
+        "action": { "type": "string" },
+        "targetType": { "type": "string" },
+        "targetId": { "type": "string" },
+        "summary": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["actorUid", "actorRole", "action", "targetType", "targetId", "summary", "createdAt", "updatedAt"]
+    },
+    "WhatsAppConfiguration": {
+      "title": "WhatsAppConfiguration",
+      "description": "Non-sensitive WhatsApp Business Cloud API status metadata (zero secrets).",
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "connectionStatus": { "type": "string", "enum": ["CONFIGURED", "UNCONFIGURED", "DEGRADED", "WEBHOOK_ERROR"] },
+        "displayPhoneNumber": { "type": "string" },
+        "phoneNumberIdMasked": { "type": "string" },
+        "wabaIdMasked": { "type": "string" },
+        "webhookConfigured": { "type": "boolean" },
+        "otpProviderEnabled": { "type": "boolean" },
+        "otpTemplateApproved": { "type": "boolean" },
+        "lastErrorSummary": { "type": "string" },
+        "lastHealthCheckAtEpochMs": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["enabled", "connectionStatus", "webhookConfigured", "otpProviderEnabled", "otpTemplateApproved", "createdAt", "updatedAt"]
+    },
+    "PlatformRuntimeSettings": {
+      "title": "PlatformRuntimeSettings",
+      "description": "Non-sensitive runtime safety, rate limit, and OTP channel toggles.",
+      "type": "object",
+      "properties": {
+        "whatsappOtpEnabled": { "type": "boolean" },
+        "whatsappSupportEnabled": { "type": "boolean" },
+        "antiSpamEnabled": { "type": "boolean" },
+        "rateLimitMaxPer10s": { "type": "integer" },
+        "autoEscalationReportThreshold": { "type": "integer" },
+        "maintenanceMode": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["whatsappOtpEnabled", "whatsappSupportEnabled", "antiSpamEnabled", "rateLimitMaxPer10s", "autoEscalationReportThreshold", "maintenanceMode", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Public discoverable profiles for DL Chat users."
+    },
+    "/users/{userId}/private/{docId}": {
+      "schema": { "$ref": "#/entities/UserPrivateInfo" },
+      "description": "Owner-only private PII such as email and Death Legion OAuth summary."
+    },
+    "/users/{userId}/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/UserSetting" },
+      "description": "Owner-only persisted settings."
+    },
+    "/users/{userId}/devices/{deviceId}": {
+      "schema": { "$ref": "#/entities/DeviceSession" },
+      "description": "Owner-only linked devices and active sessions."
+    },
+    "/users/{userId}/devicePairingSessions/{sessionId}": {
+      "schema": { "$ref": "#/entities/DevicePairingSession" },
+      "description": "Owner-only short-lived single-use QR device pairing sessions."
+    },
+    "/users/{userId}/accountSessions/{sessionId}": {
+      "schema": { "$ref": "#/entities/AccountSessionRecord" },
+      "description": "Owner-only multi-account registry records."
+    },
+    "/users/{userId}/deviceNotifications/{notifId}": {
+      "schema": { "$ref": "#/entities/DeviceNotification" },
+      "description": "Owner-only device login history and security notifications."
+    },
+    "/users/{userId}/syncEvents/{eventId}": {
+      "schema": { "$ref": "#/entities/SyncEvent" },
+      "description": "Owner-only multi-device synchronization delta events."
+    },
+    "/users/{userId}/deviceKeyBundles/{deviceId}": {
+      "schema": { "$ref": "#/entities/DeviceKeyBundle" },
+      "description": "Per-device public key bundles (private keys forbidden)."
+    },
+    "/users/{userId}/chatExports/{exportId}": {
+      "schema": { "$ref": "#/entities/ChatExportRecord" },
+      "description": "Owner-only chat export history records."
+    },
+    "/users/{userId}/privateChatSettings/{chatId}": {
+      "schema": { "$ref": "#/entities/PrivateChatSetting" },
+      "description": "Owner-only hidden and locked conversation settings."
+    },
+    "/users/{userId}/chatDrafts/{chatId}": {
+      "schema": { "$ref": "#/entities/ChatDraft" },
+      "description": "Owner-only synchronized unsent message drafts."
+    },
+    "/users/{userId}/contacts/{contactUid}": {
+      "schema": { "$ref": "#/entities/ContactEntry" },
+      "description": "Owner-only contacts, favorites, and blocked users."
+    },
+    "/users/{userId}/folders/{folderId}": {
+      "schema": { "$ref": "#/entities/ChatFolder" },
+      "description": "Owner-only custom chat folders."
+    },
+    "/users/{userId}/saved_messages/{savedId}": {
+      "schema": { "$ref": "#/entities/SavedMessage" },
+      "description": "Owner-only saved messages and personal notes."
+    },
+    "/users/{userId}/backups/{backupId}": {
+      "schema": { "$ref": "#/entities/BackupRecord" },
+      "description": "Owner-only encrypted backup metadata history."
+    },
+    "/contact_requests/{requestId}": {
+      "schema": { "$ref": "#/entities/ContactRequest" },
+      "description": "Mutual contact connection requests between users."
+    },
+    "/chats/{chatId}": {
+      "schema": { "$ref": "#/entities/ChatRoom" },
+      "description": "Direct chats, groups, and broadcast channels."
+    },
+    "/chats/{chatId}/topics/{topicId}": {
+      "schema": { "$ref": "#/entities/ChatTopic" },
+      "description": "Sub-forum discussion topics inside groups."
+    },
+    "/chats/{chatId}/events/{eventId}": {
+      "schema": { "$ref": "#/entities/GroupEvent" },
+      "description": "Group calendar events and RSVPs."
+    },
+    "/chats/{chatId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/ChatMessage" },
+      "description": "Messages belonging to a conversation or channel."
+    },
+    "/stories/{storyId}": {
+      "schema": { "$ref": "#/entities/StoryItem" },
+      "description": "24-hour status stories."
+    },
+    "/calls/{callId}": {
+      "schema": { "$ref": "#/entities/CallSession" },
+      "description": "Voice/video call signaling sessions and call logs."
+    },
+    "/reports/{reportId}": {
+      "schema": { "$ref": "#/entities/ModerationReport" },
+      "description": "Safety reports for moderator and admin triage."
+    },
+    "/staffRoles/{userId}": {
+      "schema": { "$ref": "#/entities/StaffRoleRecord" },
+      "description": "RBAC staff role assignments."
+    },
+    "/userEnforcements/{userId}": {
+      "schema": { "$ref": "#/entities/UserEnforcement" },
+      "description": "Effective account status and per-feature restriction expiry map."
+    },
+    "/userWarnings/{warningId}": {
+      "schema": { "$ref": "#/entities/UserWarning" },
+      "description": "Formal user policy warnings."
+    },
+    "/userRestrictions/{restrictionId}": {
+      "schema": { "$ref": "#/entities/UserRestrictionRecord" },
+      "description": "User restriction and suspension history."
+    },
+    "/moderationCases/{caseId}": {
+      "schema": { "$ref": "#/entities/ModerationCase" },
+      "description": "Moderator triage cases."
+    },
+    "/moderationActions/{actionId}": {
+      "schema": { "$ref": "#/entities/ModerationActionRecord" },
+      "description": "Immutable moderator enforcement actions."
+    },
+    "/appeals/{appealId}": {
+      "schema": { "$ref": "#/entities/AppealRecord" },
+      "description": "User appeals against restrictions or bans."
+    },
+    "/supportTickets/{ticketId}": {
+      "schema": { "$ref": "#/entities/SupportTicket" },
+      "description": "In-app customer support tickets."
+    },
+    "/supportTickets/{ticketId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/SupportTicketMessage" },
+      "description": "Two-way conversation inside a support ticket."
+    },
+    "/supportTickets/{ticketId}/internalNotes/{noteId}": {
+      "schema": { "$ref": "#/entities/SupportInternalNote" },
+      "description": "Strictly staff-only internal notes inside a support ticket."
+    },
+    "/helpArticles/{articleId}": {
+      "schema": { "$ref": "#/entities/HelpArticle" },
+      "description": "Searchable Help Center articles and FAQs."
+    },
+    "/phoneAuthProfiles/{userId}": {
+      "schema": { "$ref": "#/entities/PhoneAuthProfile" },
+      "description": "Verified E.164 phone profile and WhatsApp notification opt-in."
+    },
+    "/authSecurityEvents/{eventId}": {
+      "schema": { "$ref": "#/entities/AuthSecurityEvent" },
+      "description": "Immutable authentication and anti-spam security events."
+    },
+    "/adminAuditLogs/{logId}": {
+      "schema": { "$ref": "#/entities/AdminAuditLog" },
+      "description": "Immutable staff audit logs."
+    },
+    "/whatsappConfigurations/{configId}": {
+      "schema": { "$ref": "#/entities/WhatsAppConfiguration" },
+      "description": "Non-sensitive WhatsApp Business status metadata (zero secrets)."
+    },
+    "/platformSettings/{settingId}": {
+      "schema": { "$ref": "#/entities/PlatformRuntimeSettings" },
+      "description": "Runtime safety, anti-spam, and OTP channel configuration flags."
+    }
+  }
+}

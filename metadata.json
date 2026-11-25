@@ -1,0 +1,6 @@
+{
+  "name": "DL Chat",
+  "description": "DL Chat by Death Legion — real-time messaging, groups, channels, stories, and AI assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
